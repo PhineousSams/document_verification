@@ -21,13 +21,15 @@ const CheckerDashboard = ({ contract, account }) => {
       const docsPromises = allDocs.map(id => 
         contract.methods.getDocument(id).call()
           .then(doc => ({
-            documentHash: id,
+            id: id, // Keep the original ID for approveDocument and rejectDocument
+            documentHash: doc[0], // This is also the document hash
             owner: doc[1],
             timestamp: doc[2],
             status: parseInt(doc[3]),
             expiryDate: doc[4],
             metadata: doc[5] ? JSON.parse(doc[5]) : {},
-            verifier: doc[6]
+            verifier: doc[6],
+            rejectionReason: doc[7]
           }))
           .catch(() => null)
       );
@@ -41,12 +43,12 @@ const CheckerDashboard = ({ contract, account }) => {
     }
   };
 
-  const handleVerify = async (documentHash) => {
-    if (!documentHash || processingTx) return;
+  const handleVerify = async (documentId) => {
+    if (!documentId || processingTx) return;
     
     try {
       setProcessingTx(true);
-      await contract.methods.approveDocument(documentHash).send({ from: account });
+      await contract.methods.approveDocument(documentId).send({ from: account });
       await fetchPendingDocuments();
     } catch (error) {
       console.error('Error verifying document:', error);
@@ -55,8 +57,8 @@ const CheckerDashboard = ({ contract, account }) => {
     }
   };
 
-  const openRejectModal = (documentHash) => {
-    setSelectedDocument(documentHash);
+  const openRejectModal = (documentId) => {
+    setSelectedDocument(documentId);
     setShowRejectModal(true);
   };
 
@@ -104,7 +106,7 @@ const CheckerDashboard = ({ contract, account }) => {
               </thead>
               <tbody>
                 {documents.map((doc) => (
-                  <tr key={doc.documentHash}>
+                  <tr key={doc.id}>
                     <td data-label="Document Hash" className="document-hash-cell">
                       {doc.documentHash}
                     </td>
@@ -122,14 +124,14 @@ const CheckerDashboard = ({ contract, account }) => {
                     <td data-label="Actions">
                       <div className="admin-action-buttons">
                         <button
-                          onClick={() => handleVerify(doc.documentHash)}
+                          onClick={() => handleVerify(doc.id)}
                           disabled={processingTx}
                           className="admin-verify-button"
                         >
                           {processingTx ? 'Processing...' : 'Verify'}
                         </button>
                         <button
-                          onClick={() => openRejectModal(doc.documentHash)}
+                          onClick={() => openRejectModal(doc.id)}
                           disabled={processingTx}
                           className="admin-reject-button"
                         >
@@ -184,8 +186,3 @@ const CheckerDashboard = ({ contract, account }) => {
 };
 
 export default CheckerDashboard;
-
-
-
-
-
