@@ -1,7 +1,7 @@
 const config = {
   networks: {
     ganache: {
-      contractAddress: "0x9404C47F68fa4b782A6adff09c4Fb6c1F8962710",
+      contractAddress: "0x7aed0521010B54181008cDEbB23D5930D265cC1d",
       rpcUrl: "http://127.0.0.1:7545"
     },
     sepolia: {
@@ -10,19 +10,10 @@ const config = {
     }
   },
   accounts: {
-    admin: "0x67869f5C7d4DfC3A973CabE6bd91D0b3b9aa02F4",  // Your admin account
-    maker: "0x4c96d6aA0305655E88909F9fC5434767d007Ff68"   // Your maker account
+    admin: "0x33e7cd84aEba40328d202E8a60b0fC66D38e3412",  // Your admin account 
+    maker: "0xA9730bB95d180803033C5924FE53F7c2f3Ee624d"   // Your maker account
   },
   contracts_directory: './src/artifacts/contracts'
 };
 
 export default config;
-
-
-
-
-
-
-
-
-
